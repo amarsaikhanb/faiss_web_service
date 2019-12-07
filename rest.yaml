@@ -1,0 +1,149 @@
+info:
+    title: Faiss Web Service
+    description: Search your Faiss index via http requests
+    version: 0.0.1
+
+consumes:
+    - application/json
+
+produces:
+    - application/json
+
+paths:
+    /search/<string:index>/:
+        summary: Search your Faiss index
+        description: The endpoint returns the k nearest neighbors for the given keys or vectors.
+        request:
+            method: post
+            type: object
+            required: ['k', 'keys']
+            properties:
+                k:
+                    description: Amount of neighbors to return
+                    type: number -> integer
+                keys:
+                    description: Keys to search for
+                    type: array
+                    items:
+                        type: string
+                vecs:
+                    description: Vectors to search for
+                    type: array
+                    items:
+                        type: number -> float
+                metric:
+                    description: Metric to calculate vector's similarity
+                    type: string
+
+            method: get
+            description: ?k=100&keys=a;b;c[&metric=ip] (if keys has multi values, use ';' as separator)
+            properties:
+                k:
+                    description: Amount of neighbors to return
+                    type: number -> integer
+                keys:
+                    description: Keys to search for
+                    type: array
+                    items:
+                        type: string
+                metric:
+                    description: Metric to calculate vector's similarity
+                    type: string
+        response_code:
+            '200':
+            description: Nearest neighbors found, with their score
+            '400':
+            description: Bad request
+            '500':
+            description: Server error
+        response:
+            type: array
+            items:
+                type: object
+                properties:
+                    key:
+                        type: string
+                    vec:
+                        type: array
+                        items:
+                            type: number -> float
+                    neighbors:
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                neighbor:
+                                    type: string
+                                vec:
+                                    type: array
+                                    items:
+                                        type: number -> float
+                                similarity:
+                                    type: number -> float
+
+    /add/<string:index>/:
+        summary: Add vector to your Faiss index
+        description: The endpoint returns the status of add.
+        request:
+            method: post
+            type: object
+            required: ['keys', 'vecs']
+            properties:
+                keys:
+                    description: Keys to search for
+                    type: array
+                    items:
+                        type: string
+                vecs:
+                    description: Vectors to search for
+                    type: array
+                    items:
+                        type: number -> float
+        response_code:
+            '200':
+            description: Done
+            '400':
+            description: Bad request
+            '500':
+            description: Server error
+
+    /update/<string:index>/:
+        summary: Update your Faiss index
+        description: The endpoint returns the status of update.
+        request:
+            method: get
+        response_code:
+            '200':
+            description: Done
+            '400':
+            description: Bad request
+            '500':
+            description: Server error
+    /delete/<string:index>/:
+        summary: Delete your Faiss index
+        description: The endpoint returns the status of delete.
+        request:
+            method: get
+        response_code:
+            '200':
+            description: Done
+            '400':
+            description: Bad request
+            '500':
+            description: Server error
+     /ping:
+        summary: Check server living status and get indexes in server
+        description: The endpoint returns the name of indexes.
+        request:
+            method: get
+        response_code:
+            '200':
+            description: Done
+            '400':
+            description: Bad request
+            '500':
+            description: Server error
+        response:
+            type: array
+            items:
+                type: string

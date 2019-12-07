@@ -1,0 +1,5 @@
+flask
+jsonschema
+pymongo
+requests
+uwsgi
